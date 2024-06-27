@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🪷 Nomad Nirvana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/style.css') }}">
+</head>
+
+<body>
+    <div class="nav flex">
+        <h1 class="logo"><a href="/dashboard"> 🪷 Nomad Nirvana</a></h1>
+        <ul class="flex nav-items">
+            <li><a href="#">Wishlist</a></li>
+            <li>
+                <div class="dropdown">
+                    <a class="btn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Upcoming Trips</a>
+                        <ul class="dropdown-menu dropdown-menu-dark" id="vacationList">
+                            {% for vacation in vacations %}
+                                {% if vacation.user_id == logged_user.id %}
+                                <li><a class="dropdown-item" href="/trip/view/{{vacation.id}}">{{vacation.city}}, {{vacation.country}}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            <li><a class="dropdown-item" href="/trip/add">Add a Trip</a></li>
+                        </ul>
+                </div>
+            </li> 
+
+            <li>
+                <div class="dropdown">
+                    <a class="btn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ url_for('static', filename='assets/gear.svg') }}" alt="gear icon"></a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="#">Account Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Appearance</a></li>
+                            <li><a class="dropdown-item" href="#">Privacy</a></li>
+                        </ul>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a class="btn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img id="profile-pic" src="{{ url_for('static', filename='assets/person.svg') }}" alt="profile image"></a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="#">My Past Trips</a></li>
+                            <li><a class="dropdown-item" href="#">View My Profile</a></li>
+                            <div class="dropdown-divider"></div>
+                            <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                        </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="countdown">
+        <h1>Welcome to Nomad Nirvana!</h1>
+    </div>
+
+    <div class="center">
+        <h2> Your Upcoming Trips: </h2>
+        <table class="table table-dark" style="width:fit-content; margin-left: auto; margin-right: auto;">
+            <thead>
+                <tr>
+                    <th>Destination </th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vacation in vacations %}
+                    {% if vacation.user_id == logged_user.id %}
+                <tr>
+                    <td class="vaclink"><a href="/trip/view/{{vacation.id}}">{{vacation.city}}, {{vacation.country}}</a></td>
+                    <td>{{vacation.date.strftime('%m/%d/%Y')}}</td>
+                    <td><a href="/trip/edit/{{vacation.id}}"><img id="edittrip" src="{{ url_for('static', filename='assets/pencil-square.svg') }}" alt="edit icon"></a> | <a href="/trip/delete/{{vacation.id}}"><img id="deletetrip" src="{{ url_for('static', filename='assets/trash3.svg') }}" alt="delete icon"></a></td>
+                </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/trip/add" class="btn btn-outline-info">Add Another Trip</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+
+</html>

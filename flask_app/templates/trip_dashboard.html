@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🪷 Nomad Nirvana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/style.css') }}">
+</head>
+
+<body>
+    <div class="nav flex">
+        <h1 class="logo"><a href="/dashboard"> 🪷 Nomad Nirvana</a></h1>
+        <ul class="flex nav-items">
+            <li><a href="#">Wishlist</a></li>
+            <li>
+                <div class="dropdown">
+                    <a class="btn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Upcoming Trips</a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            {% for vacation in vacations %}
+                                {% if vacation.user_id == logged_user.id %}
+                                <li><a class="dropdown-item" href="/trip/view/{{vacation.id}}">{{vacation.city}}, {{vacation.country}}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            <li><a class="dropdown-item" href="/trip/add">Add a Trip</a></li>
+                        </ul>
+                </div>
+            </li> 
+
+            <li>
+                <div class="dropdown">
+                    <a class="btn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ url_for('static', filename='assets/gear.svg') }}" alt="gear icon"></a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="#">Account Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Appearance</a></li>
+                            <li><a class="dropdown-item" href="#">Privacy</a></li>
+                        </ul>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a class="btn" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img id="profile-pic" src="{{ url_for('static', filename='assets/person.svg') }}" alt="profile image"></a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="#">My Past Trips</a></li>
+                            <li><a class="dropdown-item" href="#">View My Profile</a></li>
+                            <div class="dropdown-divider"></div>
+                            <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="countdown"></div>
+        
+        <h1 class="tripName">{{this_vacation.city}}, {{this_vacation.country}}
+            <a href="/trip/edit/{{this_vacation.id}}"><img id="edittrip" src="{{ url_for('static', filename='assets/pencil-square.svg') }}" alt="edit icon"></a>
+        </h1>
+        
+        <div class="collapsebtns">
+            <a class="btn btn-outline-info" data-bs-toggle="collapse" href="#itinerarycollapse" role="button" aria-expanded="false" aria-controls="itinerarycollapse">
+                Itinerary
+            </a>
+            <a class="btn btn-outline-info" data-bs-toggle="collapse" href="#packinglist" role="button" aria-expanded="false" aria-controls="packinglist">
+                Packing List
+            </a>
+        </div>
+
+    <div class="mainContent flex">
+
+        <div class="weather rounded">
+            <h2 id="weatherHead">14 Day Forecast in {{this_vacation.city}}, {{this_vacation.country}}</h2>
+            <div class="weatherinfo">
+            </div>
+        </div>
+
+        <div class="tripInspiration">
+            {% if inspirationvideos == False %}
+                <p>No inspiration videos yet! If you find a YouTube video, add it here! </p>
+            {% else %}
+            {% for video in inspirationvideos %}
+            {% endfor %}
+            <div id="inspirationCarousel" class="carousel slide">
+                <div class="carousel-inner">
+                    {% for video in inspirationvideos %}
+                    {% if loop.first %}
+                    <div class="carousel-item active">
+                        <iframe width="560" height="315"
+                            src="https://www.youtube.com/embed/{{video.edited_link}}"
+                            title="YouTube video player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    {% else %}
+                    <div class="carousel-item">
+                        <iframe width="560" height="315"
+                            src="https://www.youtube.com/embed/{{video.edited_link}}"
+                            title="YouTube video player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if inspirationvideos %}
+                <div class="carousel-indicators">
+                    {% for video in inspirationvideos %}
+                        {% if loop.first %}
+                            <button type="button" class="active" data-bs-target="#inspirationCarousel" data-bs-slide-to="0"></button>
+                        {% else %}
+                            <button type="button" data-bs-target="#inspirationCarousel" data-bs-slide-to="{{loop.index0}}"></button>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <a href="/video/add/{{this_vacation.id}}" class="btn btn-outline-info">Add Another Video</a>
+        </div>
+    </div>
+
+    <div class="flex mainContent">
+        <div class="collapse" id="itinerarycollapse">
+                <div class="itinerary rounded card card-body">
+                    <div class="flex itHead">
+                        <h2>Itinerary: </h2>
+                        <div>
+                            <button type="button" class="plus" onclick="addItinerary(), alert('Your items have been added.')">+</button>
+                            <button class="btn btn-outline-info"
+                                onclick="alert('This itinerary has been emailed to the email on your account. It will arrive within 20 minutes.')">Email
+                                Itinerary</button>
+                        </div>
+                    </div>
+                    <ul>
+                        <div>
+                            <li><span class="itDate">Monday, 9/23: Explore the capital</span>
+                                <ul>
+                                    <li>9:00 am - 10:00 am: Grab breakfast at the panaderia and coffee at the cafe and eat it in the park</li>
+                                    <li>10:00 am - 2:00 pm: Hop on the bus (stop 39) and head to the Mercado Central for shopping</li>
+                                    <li>2:00 pm - 5:00 pm: Walk to the National Theater and see a play</li>
+                                    <li>5:00 pm - 7:00 pm: Find a place downtown to grab some dinner and drinks</li>
+                                    <li>7:00 pm: Hop on the bus and head back to the hotel to swim and hang out</li>
+                                </ul></li>
+                        </div>
+                        <div>
+                            <li><span class="itDate">Tuesday, 9/24: Isla Tortuga</span>
+                            <ul>
+                                <li>5:30 am: Arrive at Tortuga Island Tours lobby to depart for Isla Tortuga by bus</li>
+                                <li>7:45 am: Arrival to port town (Puntarenas)</li>
+                                <li>9:45 am: Arrival at Isla Tortuga (by boat)</li>
+                                <li>1:00 pm: Lunch at the island</li>
+                                <li>3:30 pm - 8:30 pm: Journey back to Tortuga Island Tours</li>
+                                <li>8:30 pm: Uber back to hotel</li>
+                            </ul></li>
+                        </div>
+                    </ul>
+                </div>
+        </div>
+        <div class="collapse" id="packinglist">
+            <div class="itinerary rounded card card-body">
+                <div class="flex itHead">
+                    <h2>Packing List: </h2>
+                    <button type="button" class="plus" onclick="addItinerary(), alert('Your items have been added.')">+</button>
+                </div>
+                <ul>
+                    <li>Shoes </li>
+                    <li>Sunscreen</li>
+                </ul>
+            </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        function startCountdown() {
+            // Pull vacation data from api first
+            fetch('http://localhost:8000/api/vacations/{{this_vacation.id}}')
+                .then( response => response.json() )
+                .then( data => {
+                    var tripDate = Date.parse(data[0].date)
+                    
+                    var timer = setInterval(function() {
+                        var now = new Date().getTime();
+                        var timeRemaining = tripDate - now;
+        
+                        var days = Math.floor(timeRemaining/ (1000 * 60 * 60 * 24));
+                        var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                        var banner = document.querySelector(".countdown");
+                    
+                        banner.innerHTML = `<h1> Your trip is in:
+                                            ${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds. </h1>`
+                        
+                        if (timeRemaining < 0) {
+                            clearInterval(timer);
+                            banner.innerHTML = "<h1> Trip time! 🎉 </h1>";
+                        }
+                    }, 1000);
+                }
+        )}
+    </script>
+    <script>
+        async function fetchWeather() {
+
+            var latLongLink = "https://geocoding-api.open-meteo.com/v1/search?name={{this_vacation.city}},{{this_vacation.country}}&count=10&language=en&format=json"
+            var response = await fetch(latLongLink)
+            var data = await response.json();
+
+            var latitude = data["results"][0].latitude;
+            var longitude = data["results"][0].longitude;
+            
+            var weathersection = document.querySelector(".weatherinfo");
+            weathersection.innerHTML = "";
+
+            "https://api.open-meteo.com/v1/forecast?latitude=39.0997&longitude=-94.5786&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=auto&forecast_days=14"
+            apiLink = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=auto&forecast_days=14"
+
+            var response = await fetch(apiLink);
+            var data = await response.json();
+
+            var weatherCodes = [];
+            var imgSrcs = [];
+
+            for (i = 0; i < 14; i++) {
+
+                switch (data.daily.weather_code[i]) {
+                    case 0:
+                        weatherCodes.push("Clear sky");
+                        imgSrcs.push("/static/assets/sun.svg");
+                        break;
+
+                    case 1:
+                        weatherCodes.push("Mainly clear");
+                        imgSrcs.push("/static/assets/sun.svg");
+                        break;
+
+                    case 2:
+                        weatherCodes.push("Partly cloudy");
+                        imgSrcs.push("/static/assets/cloud.svg");
+                        break;
+
+                    case 3:
+                        weatherCodes.push("Overcast");
+                        imgSrcs.push("/static/assets/cloud.svg");
+                        break;
+
+                    case 45:
+                    case 48:
+                        weatherCodes.push("Fog");
+                        imgSrcs.push("/static/assets/cloud-fog.svg");
+                        break;
+
+                    case 51:
+                        weatherCodes.push("Light drizzle");
+                        imgSrcs.push("/static/assets/cloud-drizzle.svg");
+                        break;
+
+                    case 53:
+                    case 55:
+                        weatherCodes.push("Drizzling");
+                        imgSrcs.push("/static/assets/cloud-drizzle.svg");
+                        break;
+
+                    case 56:
+                    case 57:
+                        weatherCodes.push("Freezing drizzle");
+                        imgSrcs.push("/static/assets/cloud-sleet.svg");
+                        break;
+                    
+                    case 61:
+                        weatherCodes.push("Light rain");
+                        imgSrcs.push("/static/assets/cloud-rain.svg");
+                        break;
+
+                    case 63:
+                        weatherCodes.push("Moderate rain");
+                        imgSrcs.push("/static/assets/cloud-rain.svg");
+                        break;
+
+                    case 65:
+                    case 82:
+                        weatherCodes.push("Heavy rain");
+                        imgSrcs.push("/static/assets/cloud-rain.svg");
+                        break;
+                    
+                    case 66:
+                    case 67:
+                        weatherCodes.push("Freezing rain");
+                        imgSrcs.push("/static/assets/cloud-sleet.svg");
+                        break;
+
+                    case 71:
+                    case 77:
+                        weatherCodes.push("Light snow");
+                        imgSrcs.push("/static/assets/cloud-snow.svg");
+                        break;
+
+                    case 73:
+                        weatherCodes.push("Moderate snow");
+                        imgSrcs.push("/static/assets/cloud-snow.svg");
+                        break;
+
+                    case 75:
+                        weatherCodes.push("Heavy snow");
+                        imgSrcs.push("/static/assets/cloud-snow.svg");
+                        break;
+
+                    case 85:
+                    case 86:
+                        weatherCodes.push("Snow flurries");
+                        imgSrcs.push("/static/assets/cloud-snow.svg");
+                        break;
+
+                    case 80:
+                        weatherCodes.push("Some rain showers");
+                        imgSrcs.push("/static/assets/cloud-rain.svg");
+                        break;
+
+                    case 81:
+                        weatherCodes.push("Moderate rain showers");
+                        imgSrcs.push("/static/assets/cloud-rain.svg");
+                        break;
+
+                    case 95:
+                    case 96:
+                    case 99:
+                        weatherCodes.push("Thunderstorms");
+                        imgSrcs.push("/static/assets/cloud-lightning-rain.svg");
+                        break;
+                    
+                    default:
+                        console.log("There was an error with the weather API.");
+                }
+            }
+
+            for (var i = 0; i < 14; i++) {
+                var newDiv = document.createElement("div");
+
+                newDiv.innerHTML = `
+                    <p> ${data.daily.time[i]} </p>
+                    <img src=${imgSrcs[i]} alt="day 1 weather icon">
+                    <div>
+                        <p>${weatherCodes[i]}</p>
+                        High ${Math.round(data.daily.temperature_2m_max[i])}°F, Low ${Math.round(data.daily.temperature_2m_min[i])}°F</p>
+                    </div>`
+
+                newDiv.classList.add("flex");
+                newDiv.classList.add("weatheritems");
+
+                weathersection.appendChild(newDiv);
+            }
+        }
+    </script>
+    <script>
+        window.onload = startCountdown();
+        window.onload = fetchWeather();
+    </script>
+
+</body>
+</html>
