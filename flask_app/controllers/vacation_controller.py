@@ -1,7 +1,7 @@
 from flask_app import app
 from flask import render_template, request, session, redirect, flash, jsonify
 from flask_app.models import vacation_model, inspiration_model
-from flask_app.models import user_model
+from flask_app.models import user_model, itinerary_model
 
 # Add trip routes
 @app.route('/trip/add')
@@ -45,7 +45,9 @@ def render_view_trip(vacation_id):
 
     logged_user = user_model.User.get_by_id({"id": session['user_id']})
     
-    return render_template("trip_dashboard.html", this_vacation=this_vacation, vacations=vacations, logged_user=logged_user, inspirationvideos=inspirationvideos)
+    itinerary = itinerary_model.Itinerary.get_all_for_trip(data)
+
+    return render_template("trip_dashboard.html", this_vacation=this_vacation, vacations=vacations, logged_user=logged_user, inspirationvideos=inspirationvideos, itinerary=itinerary)
 
 @app.route("/trip/delete/<int:vacation_id>")
 def delete_trip(vacation_id):

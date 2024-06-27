@@ -127,44 +127,47 @@
         <div class="collapse" id="itinerarycollapse">
                 <div class="itinerary rounded card card-body">
                     <div class="flex itHead">
-                        <h2>Itinerary: </h2>
+                        <h2>Itinerary </h2>
                         <div>
-                            <button type="button" class="plus" onclick="addItinerary(), alert('Your items have been added.')">+</button>
+                            <a href="/itinerary/add/{{this_vacation.id}}"><img id="additinerary" src="{{ url_for('static', filename='assets/plus-circle.svg') }}" alt="add icon"></a>
                             <button class="btn btn-outline-info"
                                 onclick="alert('This itinerary has been emailed to the email on your account. It will arrive within 20 minutes.')">Email
                                 Itinerary</button>
                         </div>
                     </div>
-                    <ul>
-                        <div>
-                            <li><span class="itDate">Monday, 9/23: Explore the capital</span>
-                                <ul>
-                                    <li>9:00 am - 10:00 am: Grab breakfast at the panaderia and coffee at the cafe and eat it in the park</li>
-                                    <li>10:00 am - 2:00 pm: Hop on the bus (stop 39) and head to the Mercado Central for shopping</li>
-                                    <li>2:00 pm - 5:00 pm: Walk to the National Theater and see a play</li>
-                                    <li>5:00 pm - 7:00 pm: Find a place downtown to grab some dinner and drinks</li>
-                                    <li>7:00 pm: Hop on the bus and head back to the hotel to swim and hang out</li>
-                                </ul></li>
-                        </div>
-                        <div>
-                            <li><span class="itDate">Tuesday, 9/24: Isla Tortuga</span>
-                            <ul>
-                                <li>5:30 am: Arrive at Tortuga Island Tours lobby to depart for Isla Tortuga by bus</li>
-                                <li>7:45 am: Arrival to port town (Puntarenas)</li>
-                                <li>9:45 am: Arrival at Isla Tortuga (by boat)</li>
-                                <li>1:00 pm: Lunch at the island</li>
-                                <li>3:30 pm - 8:30 pm: Journey back to Tortuga Island Tours</li>
-                                <li>8:30 pm: Uber back to hotel</li>
-                            </ul></li>
-                        </div>
-                    </ul>
+                    {% if not itinerary %}
+                    <p>Nothing here yet!</p>
+                    {% else %}
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Location</th>
+                                <th>Description</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in itinerary %}
+                            <tr>
+                                <td>{{item.day}}</td>
+                                <td>{{item.time}}</td>
+                                <td>{{item.address}}</td>
+                                <td>{{item.description}}</td>
+                                <td>{{item.notes}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
                 </div>
         </div>
         <div class="collapse" id="packinglist">
             <div class="itinerary rounded card card-body">
                 <div class="flex itHead">
-                    <h2>Packing List: </h2>
-                    <button type="button" class="plus" onclick="addItinerary(), alert('Your items have been added.')">+</button>
+                    <h2>Packing List </h2>
+                    <a href="#"><img id="addpl" src="{{ url_for('static', filename='assets/plus-circle.svg') }}" alt="add icon"></a>
                 </div>
                 <ul>
                     <li>Shoes </li>
