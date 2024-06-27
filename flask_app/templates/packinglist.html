@@ -15,20 +15,20 @@
                 {% for message in get_flashed_messages(category_filter=['packing_list']) %}
                 <p class="text-danger">{{message}}</p>
                 {% endfor %}
-            <form action="" method="post">
+            <form action="/packinglist/added/{{this_vacation.id}}" method="post">
                 <div class="mb-3">
                     <label for="category">Category: </label>
                     <select id = "category" name="category">
-                        <option value="accessories">Accessories</option>
-                        <option value="clothing">Clothing</option>
-                        <option value="documents">Documents</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="gear">Gear</option>
-                        <option value="health">Health</option>
-                        <option value="money">Money</option>
-                        <option value="other">Other</option>
-                        <option value="shoes">Shoes</option>
-                        <option value="toiletries">Toiletries</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Documents">Documents</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Gear">Gear</option>
+                        <option value="Health">Health</option>
+                        <option value="Money">Money</option>
+                        <option value="Other">Other</option>
+                        <option value="Shoes">Shoes</option>
+                        <option value="Toiletries">Toiletries</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -39,27 +39,28 @@
                     <label for="quantity">Quantity: </label>
                     <input type="number" name="quantity" class="form-control">
                 </div>
-                <button type="submit" class="btn btn-primary">Add To Your Itinerary</button>
+                <button type="submit" class="btn btn-primary">Add To Your List</button>
                 <a href="/trip/view/{{this_vacation.id}}" class="btn btn-danger">Back</a>
             </form>
-            <!-- Allow user to add address and maybe embed Google map of spot? Or an image -->
-            <!-- See if you can use js to allow users to keep adding activities for the day until they are ready to submit -->
-            <!-- submit -->
         </div>
         <div class="container fit">
-            <h1>Itinerary So Far:</h1>
+            <h1>Packing List So Far:</h1>
             <table class="table table-dark">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Description</th>
-                        <th>Notes</th>
+                        <th>Category</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Put Jinja here with data -->
+                    {% for item in packinglist %}
+                    <tr>
+                        <td>{{item.category}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.quantity}}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

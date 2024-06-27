@@ -13,7 +13,9 @@ def render_add_pl(vacation_id):
 
     this_vacation = vacation_model.Vacation.get_one(data)
 
-    return render_template("packinglist.html", this_vacation=this_vacation)
+    packinglist = packinglist_model.PackingListItem.get_all_for_trip(data)
+
+    return render_template("packinglist.html", packinglist=packinglist, this_vacation=this_vacation)
 
 @app.route("/packinglist/added/<int:vacation_id>", methods=["POST"])
 def process_add_pl(vacation_id):
@@ -31,6 +33,6 @@ def process_add_pl(vacation_id):
     if not packinglist_model.PackingListItem.validate_pl(request.form):
         return redirect(f'/packinglist/add/{vacation_id}')
 
-    packinglist_model.PackingListItem.update(data)
+    packinglist_model.PackingListItem.save(data)
 
-    return redirect(f'/packinglist/add/{vacation_id}')
+    return redirect(f"/trip/view/{vacation_id}")
